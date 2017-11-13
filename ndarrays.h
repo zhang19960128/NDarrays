@@ -56,7 +56,8 @@ double& operator()(int a,...){
 	std::vector<int> coord(0);
 	coord.push_back(first);
 	for(size_t t=1;t<dimention;t++){
-		coord.push_back(va_arg(arg,int));
+		first=va_arg(arg,int);
+		coord.push_back(first);
 	}
 	va_end(arg);
 	for(size_t t=0;t<dimention-1;t++){
