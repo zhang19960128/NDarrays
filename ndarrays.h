@@ -73,14 +73,14 @@ double& operator()(int a,...){
 	}
 	return p[temp];
 }
-friend std::ostream& operator<<(std::ostream &os,ndarrays out);
+friend std::ostream& operator<<(std::ostream &os,ndarrays& out);
 private:
 	int dimention;
 	std::vector<int> size;
 	double *p;
 	int linearlength;
 };
-std::ostream& operator<<(std::ostream &os,ndarrays out){
+std::ostream& operator<<(std::ostream& os, ndarrays& out){
 	int temp=1;
 	os<<"the dimention of the array is: "<<out.dimention<<std::endl;
 	os<<"the sizes of different dimention are:"<<std::endl;
