@@ -20,6 +20,7 @@ ndarrays(int dimen,...){
 	}
 	va_end(args);
 	size=a;
+	linearlength=temp;
 	p=new double[temp];
 }
 ndarrays(const ndarrays& a){
@@ -30,6 +31,9 @@ ndarrays(const ndarrays& a){
 		temp=temp*(*i);
 	}
 	p=new double[temp];
+	for(size_t t=0;t<a.linearlength;t++){
+		p[t]=a.p[t];
+	}
 }
 ndarrays& operator=(const ndarrays& a){
 	size=a.size;
@@ -39,6 +43,9 @@ ndarrays& operator=(const ndarrays& a){
 		temp=temp*(*i);
 	}
 	p=new double[temp];
+	for(size_t t=0;t<a.linearlength;t++){
+		p[t]=a.p[t];
+	}
 	return *this;
 }
 ~ndarrays(){
@@ -68,9 +75,10 @@ double& operator()(int a,...){
 }
 friend std::ostream& operator<<(std::ostream &os,ndarrays out);
 private:
-int dimention;
-std::vector<int> size;
-double *p;
+	int dimention;
+	std::vector<int> size;
+	double *p;
+	int linearlength;
 };
 std::ostream& operator<<(std::ostream &os,ndarrays out){
 	int temp=1;
@@ -83,8 +91,7 @@ std::ostream& operator<<(std::ostream &os,ndarrays out){
 	os<<std::endl;
 	os<<"elements are:"<<std::endl;
 	for(size_t t=0;t<temp;t++){
-		os<<out.p[t]<<" ";
+		os<<(out.p)[t]<<std::endl;
 	}
-	os<<std::endl;
 	return os;
 }
