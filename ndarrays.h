@@ -1,52 +1,89 @@
-#include <initializer_list>
+#include <stdarg.h>
 #include <vector>
 #include <new>
 #include <iostream>
 class ndarrays{
-	public:
-	//construct differnt dimention list//
-	ndarrays(std::initializer_list<int> l){
-		size=l;
-		size_t temp=1;
-		for(auto i=l.begin();i!=l.end();i++){
-			temp=temp*(*i);
-		}
-		p=new double[temp];
+public:
+//construct differnt dimention list//
+ndarrays(int dimen,...){
+	/*construct a ndimentional array, the first argument is it's dimention, the comming arguments are the lengths of different dimentions*/
+	va_list args;
+	std::vector<int> a(0);
+	va_start(args,dimen);
+	dimention=dimen;
+	int temp=1;
+	int temp2;
+	for(int i=0;i<dimen;i++){
+		temp2=va_arg(args,int);
+		a.push_back(temp2);
+		temp=temp*(temp2);
 	}
-	ndarrays(const ndarrays& a){
-		size=a.size;
-		size_t temp=1;
-		for(auto i=a.size.begin();i!=a.size.end();i++){
-			temp=temp*(*i);
-		}
-		p=new double[temp];
+	va_end(args);
+	size=a;
+	p=new double[temp];
+}
+ndarrays(const ndarrays& a){
+	size=a.size;
+	dimention=a.dimention;
+	int temp=1;
+	for(auto i=size.begin();i<size.end();i++){
+		temp=temp*(*i);
 	}
-	ndarrays& operator=(const ndarrays& a){
-		size=a.size;
-		size_t temp=1;
-		for(auto i=a.size.begin();i!=a.size.end();i++){
-			temp=temp*(*i);
-		}
-		p=new double[temp];
-		return *this;
+	p=new double[temp];
+}
+ndarrays& operator=(const ndarrays& a){
+	size=a.size;
+	dimention=a.dimention;
+	int temp=1;
+	for(auto i=size.begin();i<size.end();i++){
+		temp=temp*(*i);
 	}
-	~ndarrays(){
-		delete []p;
+	p=new double[temp];
+	return *this;
+}
+~ndarrays(){
+	delete []p;
+}
+double& operator()(int a,...){
+	int temp;
+	va_list arg;
+	int first;
+	va_start(arg,a);
+	first=a;
+	if(dimention ==1){
+		return p[first];
 	}
-	double& operator()(std::initializer_list<int> l){
-		size_t dimen=size.size();
-		std::vector<int> coord(l.begin(),l.end());
-		int temp;
-		if(dimen==1)
-			return p[coord[0]];
-		else 
-			for(size_t t=0;t<dimen-1;t++){
-			if(t==0) temp=coord[t]*size[t+1]+coord[t+1];
-			else temp=temp*size[t+1]+coord[t+1];
-		}
-		return p[temp];
+	std::vector<int> coord(0);
+	coord.push_back(first);
+	for(size_t t=1;t<dimention;t++){
+		coord.push_back(va_arg(arg,int));
 	}
-	private:
-	std::vector<int> size;
-	double *p;
+	va_end(arg);
+	for(size_t t=0;t<dimention-1;t++){
+		if(t==0) temp=coord[t]*size[t+1]+coord[t+1];
+		else temp=temp*size[t+1]+coord[t+1];
+	}
+	return p[temp];
+}
+friend std::ostream& operator<<(std::ostream &os,ndarrays out);
+private:
+int dimention;
+std::vector<int> size;
+double *p;
 };
+std::ostream& operator<<(std::ostream &os,ndarrays out){
+	int temp=1;
+	os<<"the dimention of the array is: "<<out.dimention<<std::endl;
+	os<<"the sizes of different dimention are:"<<std::endl;
+	for(auto t=out.size.cbegin();t!=out.size.cend();t++){
+		os<<*t<<" ";
+		temp=(*t)*temp;
+	}
+	os<<std::endl;
+	os<<"elements are:"<<std::endl;
+	for(size_t t=0;t<temp;t++){
+		os<<out.p[t]<<" ";
+	}
+	os<<std::endl;
+	return os;
+}
