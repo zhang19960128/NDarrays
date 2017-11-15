@@ -5,7 +5,22 @@
 class ndarrays{
 public:
 //construct differnt dimention list//
-ndarrays(int dimen,...){
+ndarrays(int dimen,...);
+ndarrays(const ndarrays& a);
+ndarrays& operator=(const ndarrays& a);
+~ndarrays(){
+	delete [] p;
+}
+double& operator()(int a,...);
+friend std::ostream& operator<<(std::ostream &os,ndarrays& out);
+private:
+	int dimention;
+	std::vector<int> size;
+	double *p;
+	int linearlength;
+};
+
+ndarrays::ndarrays(int dimen,...){
 	/*construct a ndimentional array, the first argument is it's dimention, the comming arguments are the lengths of different dimentions*/
 	va_list args;
 	std::vector<int> a(0);
@@ -23,7 +38,7 @@ ndarrays(int dimen,...){
 	linearlength=temp;
 	p=new double[temp];
 }
-ndarrays(const ndarrays& a){
+ndarrays::ndarrays(const ndarrays& a){
 	size=a.size;
 	dimention=a.dimention;
 	int temp=1;
@@ -35,7 +50,7 @@ ndarrays(const ndarrays& a){
 		p[t]=a.p[t];
 	}
 }
-ndarrays& operator=(const ndarrays& a){
+ndarrays& ndarrays::operator=(const ndarrays& a){
 	size=a.size;
 	dimention=a.dimention;
 	int temp=1;
@@ -48,10 +63,7 @@ ndarrays& operator=(const ndarrays& a){
 	}
 	return *this;
 }
-~ndarrays(){
-	delete []p;
-}
-double& operator()(int a,...){
+double& ndarrays::operator()(int a,...){
 	int temp;
 	va_list arg;
 	int first;
@@ -73,13 +85,6 @@ double& operator()(int a,...){
 	}
 	return p[temp];
 }
-friend std::ostream& operator<<(std::ostream &os,ndarrays& out);
-private:
-	int dimention;
-	std::vector<int> size;
-	double *p;
-	int linearlength;
-};
 std::ostream& operator<<(std::ostream& os, ndarrays& out){
 	int temp=1;
 	os<<"the dimention of the array is: "<<out.dimention<<std::endl;
